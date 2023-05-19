@@ -15,7 +15,7 @@ resource "kubernetes_config_map" "aws_auth" {
 
   data = {
     mapRoles = yamlencode(
-      distinct(concat(
+      concat(distinct(concat(
         local.managed_node_group_aws_auth_config_map,
         local.self_managed_node_group_aws_auth_config_map,
         local.windows_node_group_aws_auth_config_map,
@@ -24,7 +24,10 @@ resource "kubernetes_config_map" "aws_auth" {
         local.application_teams_config_map,
         local.platform_teams_config_map,
         var.map_roles,
-      ))
+      )),
+      local.custom_aws_auth_roles_config_map,
+      local.custom_aws_auth_roles_users_config_map
+      )
     )
     mapUsers    = yamlencode(var.map_users)
     mapAccounts = yamlencode(var.map_accounts)

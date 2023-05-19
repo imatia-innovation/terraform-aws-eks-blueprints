@@ -142,6 +142,26 @@ locals {
     }
   ] : []
 
+  custom_aws_auth_roles_config_map = length(var.custom_aws_auth_roles) > 0 ? [
+    for role in var.custom_aws_auth_roles : {
+      rolearn : role.role_arn
+      groups : [
+        "${role.group}"
+      ]
+    }
+  ] : []  
+
+  custom_aws_auth_roles_users_config_map = length(var.custom_aws_auth_roles_users) > 0 ? [
+    for role in var.custom_aws_auth_roles_users : {
+      rolearn : role.role_arn
+      groups : [
+        for group in role.groups : 
+          "${group}"
+      ]
+      username: role.username
+    }
+  ] : []   
+
   cluster_iam_role_name        = var.iam_role_name == null ? "${var.cluster_name}-cluster-role" : var.iam_role_name
   cluster_iam_role_pathed_name = var.iam_role_path == null ? local.cluster_iam_role_name : "${trimprefix(var.iam_role_path, "/")}${local.cluster_iam_role_name}"
   cluster_iam_role_pathed_arn  = var.create_iam_role ? "arn:${local.context.aws_partition_id}:iam::${local.context.aws_caller_identity_account_id}:role/${local.cluster_iam_role_pathed_name}" : var.iam_role_arn

@@ -434,3 +434,24 @@ variable "platform_teams" {
   type        = any
   default     = {}
 }
+
+## CUSTOM AWS_AUTH GROUPS
+variable "custom_aws_auth_roles" {
+  description = "Map of maps of aws auth groups to create"
+  type = list(object({
+    role_arn  = string
+    group   = string
+  }))
+  default     = []
+}
+
+variable "custom_aws_auth_roles_users" {
+  description = "Map of maps of aws auth groups with users to create"
+  type = list(object({
+    role_arn  = string
+    groups   = list(string)
+    username = string
+  }))
+  default     = []
+}
+
